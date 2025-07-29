@@ -1,0 +1,5 @@
+gcp_bucket: your-bucket-name
+aws_bucket: your-aws-bucket
+paymentech_input_path: /input
+output_zip_prefix: cbis_submission_
+log_level: INFO
