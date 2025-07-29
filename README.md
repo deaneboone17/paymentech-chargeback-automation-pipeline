@@ -1,80 +1,114 @@
-# Automated Chargeback Document Packaging and Delivery
+# Chargeback Automation Pipeline (Paymentech + GCP)  
+Automates daily chargeback submissions to JPMorgan Chase using Python, GCP, and AWS. Built for scale, compliance, and audit readiness.
 
-This project automates the end-to-end process of preparing and submitting chargeback evidence files to JPMorgan Chase’s Merchant Services platform (Stratus/CBIS) according to their strict format and protocol requirements.
+---
 
-## 📌 Project Overview
+## 🚀 Overview
 
-Developed while serving as Associate Director of Finance Data Enablement at SiriusXM, this pipeline was designed to streamline and secure the submission of chargeback evidence by automating the extraction, formatting, packaging, and upload of structured data and supporting PDF documentation.
+This project automates the end-to-end workflow for preparing and submitting chargeback evidence files to JPMorgan Chase’s Merchant Services platform (Stratus/CBIS). It follows the strict format and protocol required by Paymentech and ensures reliable, compliant delivery of transaction data and supporting documentation.
 
-## 🔍 Problem Statement
+Developed while serving as Associate Director of Finance Data Enablement at SiriusXM, this pipeline replaced a time-consuming manual process with a secure, scheduled, and audit-friendly solution.
 
-Manually preparing daily chargeback submissions was time-consuming, error-prone, and inconsistent. The process required converting transaction data into a complex format accepted by Paymentech (JPMC), then bundling evidence PDFs and uploading them to both AWS and GCP cloud storage endpoints.
+---
 
-## 🧱 Architecture
+## ❗ Problem
 
-**Tools and Technologies**:
-- Jupyter & Databricks Notebooks (initial development and testing)
-- Python
-- Google Cloud Functions
-- Cloud Scheduler (trigger)
-- Google Cloud Storage
-- AWS S3
-- Google Secret Manager (credentials)
+Manual preparation of daily chargeback submissions was inefficient, error-prone, and inconsistent. Submissions required:
 
-**Pipeline Flow**:
-1. Cloud Scheduler triggers Cloud Function daily
-2. Secret Manager retrieves credentials securely for GCP and AWS
-3. GCP Storage pulls Paymentech DFR chargeback files
-4. Files are parsed to extract RTM records with specific reason codes
-5. Matching PDFs are generated from a base template
-6. Index and header records are built per JPMC's format spec (v2.11.0.0)
-7. Files are zipped and prefixed with the required header
-8. Final ZIP is uploaded to both GCP and AWS
-9. Logs are written to GCP for auditing
-10. Last run timestamp is updated to prevent duplicates
+- Parsing flat files from Paymentech’s DFR system
+- Matching PDF evidence files
+- Building structured headers, indexes, and binary content in a specific format (v2.11.0.0)
+- Uploading to both GCP and AWS for ingestion by JPMC’s CBIS system
 
-## 📄 Input/Output
+Failures in formatting or delivery could result in rejected claims or compliance gaps.
 
-**Input**:  
-- Paymentech DFR flat files from GCP  
-- PDF template (customer agreement)  
-- Last run time file (used for filtering)
+---
 
-**Output**:  
-- A ZIP file with:
-  - Header record prepended to the binary
-  - A `.txt` index file (with H1, D, and T records)
-  - PDF copies of the evidence
-- Logs and metadata for traceability
+## 🛠️ Architecture & Tools
 
-## ✅ Compliance
+**Languages & Frameworks:**
+- Python  
+- Jupyter & Databricks Notebooks (for initial dev and testing)
 
-This automation strictly follows the formatting rules outlined in:
-- *Chargeback Multiple Document Upload Stratus Supplemental Guide – v2.11.0.0*
+**Cloud Services:**
+- Google Cloud Functions (execution)  
+- Google Cloud Scheduler (daily trigger)  
+- Google Cloud Storage (DFR file ingestion, output ZIP delivery)  
+- AWS S3 (dual-upload redundancy)  
+- Google Secret Manager (credential handling)  
+- Google Cloud Logging (audit trail, error handling)
 
-All image files and index records meet the size, naming, and content rules defined by JPMorgan Chase for successful ingestion by CBIS.
+---
 
-## 📈 Impact
+## 🔄 Pipeline Flow
 
-- Saved hours of manual preparation per week
-- Reduced submission errors and rejections
-- Enabled hands-free daily submissions
-- Provided clear audit trail via structured logs
-- Increased transparency for finance and audit teams
+1. Cloud Scheduler triggers the daily Cloud Function
+2. Secret Manager retrieves GCP and AWS credentials securely
+3. Paymentech DFR files are pulled from GCP Storage
+4. Files are parsed for chargeback transactions with specific RTM codes
+5. PDF documents are generated from a base template and matched to transactions
+6. Header and index files are generated per JPMC spec v2.11.0.0
+7. Files are zipped with binary header prepended
+8. Final ZIP is uploaded to both GCP and AWS endpoints
+9. Cloud Logs are updated for traceability
+10. Last-run timestamp is written to prevent duplicate processing
 
-## 🧠 Lessons Learned
+---
 
-- Schema drift and inconsistent record layouts in source files required robust parsing logic
-- GCP + AWS dual uploads needed secure, isolated credential handling
-- Packaging binary headers with ZIP content required custom file handling
-- Scheduling and error monitoring through Cloud Logs helped ensure reliability
+## 📥 Inputs / 📤 Outputs
 
-## 🛠️ Project Status
+**Inputs:**
+- DFR flat files from Paymentech (via GCP Storage)  
+- Customer agreement PDF template  
+- Timestamp file for incremental loads
 
-As of 2025-04-11, this automation is active and scalable, and can be adapted for other high-compliance submission use cases across finance or legal ops.
+**Outputs:**
+- ZIP file containing:
+  - Header-prepended binary file
+  - `.txt` index with H1, D, and T records
+  - Evidence PDFs  
+- Logs and run metadata for audit
+
+---
+
+## 🔐 Compliance & Controls
+
+This pipeline adheres to:
+- *JPMC Chargeback Multiple Document Upload Stratus Supplemental Guide – v2.11.0.0*
+
+It enforces:
+- Accurate naming and formatting for index and image files  
+- Size and encoding standards for CBIS compatibility  
+- Secure handling of credentials and sensitive data  
+- Traceable logs for audit compliance  
+
+---
+
+## 💡 Business Impact
+
+- Saved hours of manual processing time weekly  
+- Reduced submission errors and file rejections  
+- Enabled reliable daily submission with no human intervention  
+- Delivered full audit traceability for Finance and Risk teams  
+- Recovered $1.7M+ in chargebacks via automated and compliant submission
+
+---
+
+## 🧩 Engineering Notes
+
+- Custom parsing logic was needed to handle schema drift in Paymentech DFR files  
+- Dual cloud uploads required isolated, credentialed sessions and timeout handling  
+- Binary header injection into a ZIP stream required low-level byte manipulation  
+- Logging and retry logic ensured resilience and alerting via Cloud Logs  
+
+---
+
+## 🔄 Current Status
+
+As of April 2025, this pipeline is actively in production and adaptable to other high-compliance submission workflows (e.g. legal, collections, or B2B settlements).
 
 ---
 
 **Author**: Deane Boone  
-**Role**: Director | Data Strategy & Automation | AI Strategy (in progress)
-
+**Role**: Director | Data Strategy & Automation  
+**Contact**: [LinkedIn](https://www.linkedin.com/in/deaneboone/)
