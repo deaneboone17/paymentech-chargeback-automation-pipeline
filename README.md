@@ -1,7 +1,3 @@
-[![Python CI](https://github.com/deaneboone17/paymentech-chargeback-automation-pipeline/actions/workflows/python-app.yml/badge.svg)](https://github.com/deaneboone17/paymentech-chargeback-automation-pipeline/actions/workflows/python-app.yml)
-
-
-
 # Chargeback Automation Pipeline (Paymentech + GCP)  
 Automates daily chargeback submissions to JPMorgan Chase using Python, GCP, and AWS. Built for scale, compliance, and audit readiness.
 
